@@ -14,20 +14,15 @@ echo "Zed Bootstrap (Linux/WSL)"
 echo "========================="
 echo ""
 
-# Check if git is available
+# Check if git is available. Installing git for arbitrary distros is
+# src/linux/prerequisites.sh's job (it runs once this repo is actually
+# cloned) - this entrypoint only needs enough git to get that far.
 if ! command -v git &> /dev/null; then
-    echo "Git is not installed. Installing git..."
-    if command -v apt-get &> /dev/null; then
-        sudo apt-get update -qq
-        sudo apt-get install -y git
-    elif command -v yum &> /dev/null; then
-        sudo yum install -y git
-    elif command -v pacman &> /dev/null; then
-        sudo pacman -S --noconfirm git
-    else
-        echo "Error: git not found and could not install it"
-        exit 1
-    fi
+    echo "Git is not installed. Install it with your package manager, e.g.:"
+    echo "  sudo apt-get install -y git   # Debian/Ubuntu"
+    echo "  sudo yum install -y git       # RHEL/CentOS"
+    echo "  sudo pacman -S git            # Arch"
+    exit 1
 fi
 
 echo "Ensuring repository is cloned/updated..."

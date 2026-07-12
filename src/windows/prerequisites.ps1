@@ -1,9 +1,5 @@
 # Install prerequisites on Windows: Git and Zed
 
-param(
-    [string]$RepoRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
-)
-
 Write-Host "Installing prerequisites on Windows..." -ForegroundColor Green
 
 # Check if winget is available
@@ -13,31 +9,28 @@ if (-not $wingetPath) {
     exit 1
 }
 
-# Install Git if not present
-Write-Host "Checking Git..."
-$gitPath = Get-Command git -ErrorAction SilentlyContinue
-if (-not $gitPath) {
-    Write-Host "Installing Git..." -ForegroundColor Cyan
-    winget install -e --id Git.Git -h --accept-source-agreements --accept-package-agreements
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "Warning: Git installation had issues, but continuing..." -ForegroundColor Yellow
-    }
-} else {
-    Write-Host "Git already installed" -ForegroundColor Green
-}
+$prerequisites = @(
+    @{ Command = "git"; WingetId = "Git.Git"; Label = "Git"; Required = $false },
+    @{ Command = "zed"; WingetId = "ZedIndustries.Zed"; Label = "Zed"; Required = $true }
+)
 
-# Install Zed if not present
-Write-Host "Checking Zed..."
-$zedPath = Get-Command zed -ErrorAction SilentlyContinue
-if (-not $zedPath) {
-    Write-Host "Installing Zed..." -ForegroundColor Cyan
-    winget install -e --id ZedIndustries.Zed -h --accept-source-agreements --accept-package-agreements
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "Error: Failed to install Zed" -ForegroundColor Red
-        exit 1
+foreach ($prereq in $prerequisites) {
+    Write-Host "Checking $($prereq.Label)..."
+    $found = Get-Command $prereq.Command -ErrorAction SilentlyContinue
+    if ($found) {
+        Write-Host "$($prereq.Label) already installed" -ForegroundColor Green
+        continue
     }
-} else {
-    Write-Host "Zed already installed" -ForegroundColor Green
+
+    Write-Host "Installing $($prereq.Label)..." -ForegroundColor Cyan
+    winget install -e --id $prereq.WingetId -h --accept-source-agreements --accept-package-agreements
+    if ($LASTEXITCODE -ne 0) {
+        if ($prereq.Required) {
+            Write-Host "Error: Failed to install $($prereq.Label)" -ForegroundColor Red
+            exit 1
+        }
+        Write-Host "Warning: $($prereq.Label) installation had issues, but continuing..." -ForegroundColor Yellow
+    }
 }
 
 Write-Host "Prerequisites installed successfully" -ForegroundColor Green

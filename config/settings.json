@@ -1,22 +1,145 @@
 {
-  "ui_font_family": "Jetbrains Mono",
-  "ui_font_size": 12,
-  "buffer_font_family": "Jetbrains Mono",
-  "buffer_font_size": 12,
-  "soft_wrap": "preferred_line_length",
-  "preferred_line_length": 100,
-  "theme": "Ayu Dark",
-  "base_keymap": "VSCode",
-  "vim_mode": false,
-  "terminal": {
-    "shell": {
-      "program": "wsl.exe",
-      "args": ["-e"]
+  "diff_view_style": "unified",
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "git_panel": {
+    "entry_primary_click_action": "file_diff",
+    "default_width": 360.0,
+    "status_style": "label_color",
+    "fallback_branch_name": "master",
+    "show_count_badge": false,
+    "folder_icons": true,
+    "file_icons": false,
+    "group_by": "status",
+    "collapse_untracked_diff": false,
+    "tree_view": false,
+    "diff_stats": true,
+    "dock": "right"
+  },
+  "context_servers": {
+    "mcp-server-playwright": {
+      "enabled": true,
+      "remote": false,
+      "settings": {
+        "headless": true,
+        "vision": true
+      }
     },
-    "blinking_cursor": false,
-    "line_height": 1.4,
-    "font_family": "Jetbrains Mono",
-    "font_size": 11
+    "chrome-devtools-mcp-zed": {
+      "enabled": true,
+      "remote": false,
+      "settings": {
+        "browser_url": null,
+        "ws_endpoint": null,
+        "ws_headers": null,
+        "auto_connect": null,
+        "channel": null,
+        "headless": null,
+        "isolated": null,
+        "user_data_dir": null,
+        "viewport": null,
+        "executable_path": null,
+        "chrome_arg": [],
+        "proxy_server": null,
+        "accept_insecure_certs": null,
+        "category_emulation": null,
+        "category_performance": null,
+        "category_network": null,
+        "log_file": null,
+        "extra_args": []
+      }
+    },
+    "serena-context-server": {
+      "enabled": true,
+      "remote": false,
+      "settings": {
+        "python_executable": null
+      }
+    },
+    "mcp-server-context7": {
+      "enabled": true,
+      "remote": false,
+      "settings": {
+        "context7_api_key": ""
+      }
+    }
+  },
+  "git": {
+    "inline_blame": {
+      "location": "status_bar",
+      "show_commit_summary": true,
+      "delay_ms": 0
+    }
+  },
+  "disable_ai": false,
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+    "anthropic_retention": false
+  },
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "terminal": {
+    "env": {
+      "TERM": "\"xterm-256color\""
+    },
+    "max_scroll_history_lines": 5000
+  },
+  "project_panel": {
+    "dock": "left",
+    "git_status_indicator": false,
+    "hide_gitignore": true,
+    "auto_fold_dirs": false
+  },
+  "minimap": {
+    "show": "never"
+  },
+  "file_types": {
+    "html": [
+      "*.embeddedhtml"
+    ],
+    "dotenv": [
+      ".env*"
+    ],
+    "cpp": [
+      "ostream"
+    ]
+  },
+  "line_ending": "prefer_lf",
+  "agent_servers": {
+    "github-copilot-cli": {
+      "type": "registry"
+    },
+    "claude-acp": {
+      "default_config_options": {
+        "model": "sonnet",
+        "mode": "bypassPermissions"
+      },
+      "type": "registry"
+    }
+  },
+  "base_keymap": "VSCode",
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Zed (Default)",
+    "dark": "Material Icon Theme"
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": 12.0,
+  "theme": {
+    "mode": "dark",
+    "light": "Ayu Light",
+    "dark": "Cansee Ayu"
   },
   "auto_install_extensions": {
     "ayu-darker": true,

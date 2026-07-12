@@ -13,7 +13,7 @@ Write-Host "Repository root: $RepoRoot" -ForegroundColor Cyan
 . "$PSScriptRoot\paths.ps1"
 
 Write-Host "`nStep 1: Installing prerequisites..." -ForegroundColor Yellow
-& "$PSScriptRoot\prerequisites.ps1" -RepoRoot $RepoRoot
+& "$PSScriptRoot\prerequisites.ps1"
 
 # Create Zed config directory if it doesn't exist
 if (-not (Test-Path $ZedConfigDir)) {
@@ -41,20 +41,32 @@ function Backup-IfExists {
 # Copy configuration files
 Write-Host "`nStep 2: Copying configuration files..." -ForegroundColor Yellow
 
-Backup-IfExists $ZedSettingsFile
-Copy-Item "$RepoRoot\config\settings.json" -Destination $ZedSettingsFile -Force
-Write-Host "Copied settings.json" -ForegroundColor Green
+$configFiles = @(
+    @{ Name = "settings.json"; Dest = $ZedSettingsFile },
+    @{ Name = "keymap.json"; Dest = $ZedKeymapFile },
+    @{ Name = "AGENTS.md"; Dest = $ZedAgentsFile }
+)
 
-Backup-IfExists $ZedKeymapFile
-Copy-Item "$RepoRoot\config\keymap.json" -Destination $ZedKeymapFile -Force
-Write-Host "Copied keymap.json" -ForegroundColor Green
+foreach ($file in $configFiles) {
+    Backup-IfExists $file.Dest
+    Copy-Item "$RepoRoot\config\$($file.Name)" -Destination $file.Dest -Force
+    Write-Host "Copied $($file.Name)" -ForegroundColor Green
+}
 
-Backup-IfExists $ZedAgentsFile
-Copy-Item "$RepoRoot\config\AGENTS.md" -Destination $ZedAgentsFile -Force
-Write-Host "Copied AGENTS.md" -ForegroundColor Green
+# Windows-only patch: point the integrated terminal at WSL.
+# This is the single platform-specific field (see design decision 4) -
+# everything else in settings.json is shared as-is across platforms.
+Write-Host "`nStep 3: Applying Windows-specific settings..." -ForegroundColor Yellow
+$settings = Get-Content $ZedSettingsFile -Raw | ConvertFrom-Json
+if (-not $settings.terminal) {
+    $settings | Add-Member -MemberType NoteProperty -Name terminal -Value ([PSCustomObject]@{})
+}
+$settings.terminal | Add-Member -MemberType NoteProperty -Name shell -Value ([PSCustomObject]@{ program = "wsl.exe" }) -Force
+$settings | ConvertTo-Json -Depth 20 | Set-Content $ZedSettingsFile
+Write-Host "Set terminal.shell.program = wsl.exe" -ForegroundColor Green
 
 # Sync theme extension
-Write-Host "`nStep 3: Syncing theme extension..." -ForegroundColor Yellow
+Write-Host "`nStep 4: Syncing theme extension..." -ForegroundColor Yellow
 
 $manifestPath = "$RepoRoot\theme\manifest.json"
 if (Test-Path $manifestPath) {
@@ -65,10 +77,20 @@ if (Test-Path $manifestPath) {
     $themeCacheDir = "$env:TEMP\zed-theme-sync"
     $themeInstallDir = "$ZedExtensionsDir\$extensionId"
 
+    # If the cache points at a different repo than configured, drop it so we
+    # don't silently pull/mirror the wrong theme.
+    if (Test-Path $themeCacheDir) {
+        $existingRemote = git -C $themeCacheDir remote get-url origin 2>$null
+        if ($existingRemote -ne $themeRepo) {
+            Write-Host "Theme repo changed, dropping stale cache..." -ForegroundColor Cyan
+            Remove-Item $themeCacheDir -Recurse -Force
+        }
+    }
+
     # Clone or update theme repository
     if (Test-Path $themeCacheDir) {
         Write-Host "Updating theme repository..." -ForegroundColor Cyan
-        git -C $themeCacheDir pull --ff-only origin master 2>$null | Out-Null
+        git -C $themeCacheDir pull --ff-only 2>$null | Out-Null
         if ($LASTEXITCODE -ne 0) {
             Write-Host "Failed to update theme, re-cloning..." -ForegroundColor Yellow
             Remove-Item $themeCacheDir -Recurse -Force
@@ -79,17 +101,20 @@ if (Test-Path $manifestPath) {
         git clone $themeRepo $themeCacheDir
     }
 
-    # Mirror theme to extensions directory
+    # Mirror theme to extensions directory. /MIR already deletes stale files
+    # on the destination, so no manual pre-delete is needed - and skipping it
+    # lets robocopy make this an incremental (near-instant) sync on reruns.
     Write-Host "Mirroring theme to extensions directory..." -ForegroundColor Cyan
-    if (Test-Path $themeInstallDir) {
-        Remove-Item $themeInstallDir -Recurse -Force
+    robocopy $themeCacheDir $themeInstallDir /MIR /XD .git /NFL /NDL /NJH /NJS /nc /ns /np | Out-Null
+    if ($LASTEXITCODE -ge 8) {
+        Write-Host "Error: Failed to sync theme (robocopy exit code $LASTEXITCODE)" -ForegroundColor Red
+        exit 1
     }
-    robocopy $themeCacheDir $themeInstallDir /MIR /NFL /NDL /NJH /NJS /nc /ns /np | Out-Null
 
     Write-Host "Theme synced successfully" -ForegroundColor Green
 } else {
     Write-Host "Warning: manifest.json not found" -ForegroundColor Yellow
 }
 
-Write-Host "`n✓ Zed bootstrap completed successfully!" -ForegroundColor Green
+Write-Host "`nZed bootstrap completed successfully!" -ForegroundColor Green
 Write-Host "Please restart Zed to apply all changes." -ForegroundColor Cyan

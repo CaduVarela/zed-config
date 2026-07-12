@@ -1,32 +1,19 @@
-# Zed Agent Instructions
+## Commit message
 
-## Global Agent Configuration
+You are an expert at writing Git commits. Your job is to write a short clear commit message that summarizes the changes.
 
-This file contains instructions for Zed's integrated Claude agent.
+If you can accurately express the change in just the subject line, don't include anything in the message body. Only use the body when it is providing *useful* information.
 
-### Code Generation
-- Use the latest Claude model specified in Zed's settings
-- Follow project conventions and style
-- Generate production-ready code
-- Include proper error handling
+Don't repeat information from the subject line in the message body.
 
-### Code Review
-- Check for security vulnerabilities
-- Verify correctness and performance
-- Ensure adherence to project standards
+Only return the commit message in your response. Do not include any additional meta-commentary about the task. Do not include the raw diff output in the commit message.
 
-### Documentation
-- Keep README files up-to-date
-- Document non-obvious behavior
-- Provide usage examples
+Follow good Git style:
 
-### Testing
-- Write tests alongside implementation
-- Aim for high coverage on critical paths
-- Keep test suites maintainable
-
-### Preferred Behaviors
-- Ask clarifying questions when intent is ambiguous
-- Suggest alternatives with trade-offs
-- Prioritize code clarity and maintainability
-- Provide context for architectural decisions
+- Separate the subject from the body with a blank line
+- Try to limit the subject line to 50 characters
+- Capitalize the subject line
+- Do not end the subject line with any punctuation
+- Use the imperative mood in the subject line
+- Wrap the body at 72 characters
+- Keep the body short and concise (omit it entirely if not useful)
