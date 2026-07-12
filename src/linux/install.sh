@@ -88,9 +88,29 @@ done
 # platform-specific fields (the one that exists - terminal.shell.program - is
 # applied only by the Windows installer). Native Linux gets Zed's default shell.
 
+# Remove extensions that shouldn't be installed (e.g. integrations that are
+# only used elsewhere, like Claude Code's MCP servers). Declarative and
+# idempotent: no-op once the extension is already gone.
+echo ""
+echo "Step 3: Removing disabled extensions..."
+REMOVED_EXTENSIONS_PATH="$REPO_ROOT/config/removed-extensions.json"
+if [[ -f "$REMOVED_EXTENSIONS_PATH" ]]; then
+    while IFS= read -r ext_id; do
+        installed_path="$ZED_EXTENSIONS_DIR/$ext_id"
+        work_path="$ZED_EXTENSIONS_WORK_DIR/$ext_id"
+        if [[ -d "$installed_path" ]]; then
+            rm -rf "$installed_path"
+            echo "Removed extension: $ext_id"
+        fi
+        if [[ -d "$work_path" ]]; then
+            rm -rf "$work_path"
+        fi
+    done < <(python3 -c "import json; [print(x) for x in json.load(open('$REMOVED_EXTENSIONS_PATH'))]")
+fi
+
 # Sync theme extension
 echo ""
-echo "Step 3: Syncing theme extension..."
+echo "Step 4: Syncing theme extension..."
 
 MANIFEST_PATH="$REPO_ROOT/theme/manifest.json"
 if [[ -f "$MANIFEST_PATH" ]]; then

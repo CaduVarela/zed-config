@@ -9,7 +9,8 @@ zed-config/
 ├── config/              # User settings and keybindings (synced to Zed)
 │   ├── settings.json    # Zed settings, including auto_install_extensions
 │   ├── keymap.json      # Custom keybindings (empty/VSCode base for now)
-│   └── AGENTS.md        # Agent instructions for Zed's Claude integration
+│   ├── AGENTS.md        # Agent instructions for Zed's Claude integration
+│   └── removed-extensions.json  # Extensions to actively uninstall
 ├── theme/               # Personal theme configuration
 │   └── manifest.json    # Pointer to custom theme repository
 ├── src/                 # Platform-specific installation logic
@@ -65,6 +66,35 @@ When the bootstrap runs next, Zed will automatically install the new extension.
 - `soft_wrap`, `preferred_line_length` — Line wrapping
 
 **Note:** The `terminal.shell.program` is Windows-specific (set to `wsl.exe` for WSL integration). Linux installations will use the system default shell.
+
+## Removing an Extension
+
+If an extension is installed (manually or via a previous `auto_install_extensions`
+entry) and you want the bootstrap to actively uninstall it - not just stop
+reinstalling it - add its id to `config/removed-extensions.json`:
+
+```json
+[
+  "extension-to-remove"
+]
+```
+
+On the next run, the installer deletes `extensions/installed/<id>` (and
+`extensions/work/<id>` if present) before syncing anything else. It's
+idempotent: if the extension is already gone, nothing happens. Removing an id
+from `auto_install_extensions` alone is *not* enough to uninstall an
+already-installed extension - Zed only uses that list to decide what to
+install, not to clean up what's already there - so both steps go together
+when you want an extension gone for good:
+
+1. Remove the id from `auto_install_extensions` in `config/settings.json`
+   (so Zed doesn't reinstall it).
+2. Add the id to `config/removed-extensions.json` (so the bootstrap actively
+   uninstalls it).
+
+**Note:** don't add your personal theme's `extension_id` (from
+`theme/manifest.json`) here - the theme sync step manages that extension on
+its own.
 
 ## Adding a New Personal Theme
 

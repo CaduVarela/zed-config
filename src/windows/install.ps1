@@ -53,10 +53,30 @@ foreach ($file in $configFiles) {
     Write-Host "Copied $($file.Name)" -ForegroundColor Green
 }
 
+# Remove extensions that shouldn't be installed (e.g. integrations that are
+# only used elsewhere, like Claude Code's MCP servers). Declarative and
+# idempotent: no-op once the extension is already gone.
+Write-Host "`nStep 3: Removing disabled extensions..." -ForegroundColor Yellow
+$removedExtensionsPath = "$RepoRoot\config\removed-extensions.json"
+if (Test-Path $removedExtensionsPath) {
+    $removedExtensions = Get-Content $removedExtensionsPath | ConvertFrom-Json
+    foreach ($extId in $removedExtensions) {
+        $installedPath = "$ZedExtensionsDir\$extId"
+        $workPath = "$ZedExtensionsWorkDir\$extId"
+        if (Test-Path $installedPath) {
+            Remove-Item $installedPath -Recurse -Force
+            Write-Host "Removed extension: $extId" -ForegroundColor Green
+        }
+        if (Test-Path $workPath) {
+            Remove-Item $workPath -Recurse -Force
+        }
+    }
+}
+
 # Windows-only patch: point the integrated terminal at WSL.
 # This is the single platform-specific field (see design decision 4) -
 # everything else in settings.json is shared as-is across platforms.
-Write-Host "`nStep 3: Applying Windows-specific settings..." -ForegroundColor Yellow
+Write-Host "`nStep 4: Applying Windows-specific settings..." -ForegroundColor Yellow
 $settings = Get-Content $ZedSettingsFile -Raw | ConvertFrom-Json
 if (-not $settings.terminal) {
     $settings | Add-Member -MemberType NoteProperty -Name terminal -Value ([PSCustomObject]@{})
@@ -66,7 +86,7 @@ $settings | ConvertTo-Json -Depth 20 | Set-Content $ZedSettingsFile
 Write-Host "Set terminal.shell.program = wsl.exe" -ForegroundColor Green
 
 # Sync theme extension
-Write-Host "`nStep 4: Syncing theme extension..." -ForegroundColor Yellow
+Write-Host "`nStep 5: Syncing theme extension..." -ForegroundColor Yellow
 
 $manifestPath = "$RepoRoot\theme\manifest.json"
 if (Test-Path $manifestPath) {

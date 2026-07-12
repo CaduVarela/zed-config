@@ -2,6 +2,7 @@
 
 $ZedConfigDir = "$env:APPDATA\Zed"
 $ZedExtensionsDir = "$env:LOCALAPPDATA\Zed\extensions\installed"
+$ZedExtensionsWorkDir = "$env:LOCALAPPDATA\Zed\extensions\work"
 $ZedSettingsFile = "$ZedConfigDir\settings.json"
 $ZedKeymapFile = "$ZedConfigDir\keymap.json"
 $ZedAgentsFile = "$ZedConfigDir\AGENTS.md"

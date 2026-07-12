@@ -32,7 +32,7 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/bootst
 | `src/<os>/install.*` | Main orchestrator — calls prerequisites, syncs config, installs theme |
 | `src/<os>/prerequisites.*` | Package manager integration — installs Zed, Git, and extras |
 | `src/<os>/paths.*` | Platform-specific paths — Zed config directories by OS |
-| `config/` | User settings — settings.json, keymap.json, AGENTS.md (synced to Zed) |
+| `config/` | User settings — settings.json, keymap.json, AGENTS.md, removed-extensions.json (synced to Zed) |
 | `theme/manifest.json` | Theme pointer — URL and extension ID of custom theme |
 | `docs/adding-config.md` | Extension guide — how to add new extensions, settings, themes, prerequisites |
 
@@ -44,6 +44,7 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/bootst
 4. **Personal theme as extension** — custom theme lives in separate repo, synced by bootstrap
 5. **Marketplace extensions via Zed's native mechanism** — `auto_install_extensions` in settings.json
 6. **Backups before first overwrite** — `.bak-TIMESTAMP` files preserve manual edits not yet ported
+7. **Explicit extension removal** — `config/removed-extensions.json` actively uninstalls extensions (Zed's `auto_install_extensions` only controls what gets installed, not what gets removed)
 
 ## Platform Details
 
@@ -101,8 +102,9 @@ Each run:
 1. Clones or updates the repository locally
 2. Installs/verifies Zed and Git
 3. Reapplies all configuration files
-4. Syncs theme extension
-5. Delegates extension marketplace updates to Zed itself
+4. Uninstalls any extensions listed in `config/removed-extensions.json`
+5. Syncs theme extension
+6. Delegates extension marketplace updates to Zed itself
 
 ## Installed Extensions
 
