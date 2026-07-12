@@ -1,0 +1,41 @@
+{
+  "ui_font_family": "Jetbrains Mono",
+  "ui_font_size": 12,
+  "buffer_font_family": "Jetbrains Mono",
+  "buffer_font_size": 12,
+  "soft_wrap": "preferred_line_length",
+  "preferred_line_length": 100,
+  "theme": "Ayu Dark",
+  "base_keymap": "VSCode",
+  "vim_mode": false,
+  "terminal": {
+    "shell": {
+      "program": "wsl.exe",
+      "args": ["-e"]
+    },
+    "blinking_cursor": false,
+    "line_height": 1.4,
+    "font_family": "Jetbrains Mono",
+    "font_size": 11
+  },
+  "auto_install_extensions": {
+    "ayu-darker": true,
+    "ayu-themes-glass": true,
+    "catppuccin-icons": true,
+    "chrome-devtools-mcp": true,
+    "csv": true,
+    "dockerfile": true,
+    "git-firefly": true,
+    "html": true,
+    "material-icon-theme": true,
+    "mcp-server-context7": true,
+    "mcp-server-playwright": true,
+    "php": true,
+    "powershell": true,
+    "scss": true,
+    "serena-context-server": true,
+    "sql": true,
+    "toml": true,
+    "xml": true
+  }
+}
