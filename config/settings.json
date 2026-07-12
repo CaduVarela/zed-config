@@ -25,54 +25,6 @@
     "diff_stats": true,
     "dock": "right"
   },
-  "context_servers": {
-    "mcp-server-playwright": {
-      "enabled": true,
-      "remote": false,
-      "settings": {
-        "headless": true,
-        "vision": true
-      }
-    },
-    "chrome-devtools-mcp-zed": {
-      "enabled": true,
-      "remote": false,
-      "settings": {
-        "browser_url": null,
-        "ws_endpoint": null,
-        "ws_headers": null,
-        "auto_connect": null,
-        "channel": null,
-        "headless": null,
-        "isolated": null,
-        "user_data_dir": null,
-        "viewport": null,
-        "executable_path": null,
-        "chrome_arg": [],
-        "proxy_server": null,
-        "accept_insecure_certs": null,
-        "category_emulation": null,
-        "category_performance": null,
-        "category_network": null,
-        "log_file": null,
-        "extra_args": []
-      }
-    },
-    "serena-context-server": {
-      "enabled": true,
-      "remote": false,
-      "settings": {
-        "python_executable": null
-      }
-    },
-    "mcp-server-context7": {
-      "enabled": true,
-      "remote": false,
-      "settings": {
-        "context7_api_key": ""
-      }
-    }
-  },
   "git": {
     "inline_blame": {
       "location": "status_bar",
@@ -145,18 +97,14 @@
     "ayu-darker": true,
     "ayu-themes-glass": true,
     "catppuccin-icons": true,
-    "chrome-devtools-mcp": true,
     "csv": true,
     "dockerfile": true,
     "git-firefly": true,
     "html": true,
     "material-icon-theme": true,
-    "mcp-server-context7": true,
-    "mcp-server-playwright": true,
     "php": true,
     "powershell": true,
     "scss": true,
-    "serena-context-server": true,
     "sql": true,
     "toml": true,
     "xml": true

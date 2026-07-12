@@ -22,7 +22,7 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/bootst
 - **Keybindings** — synced from `config/keymap.json` (currently VSCode base)
 - **Agent Instructions** — synced from `config/AGENTS.md`
 - **Theme Extension** — custom Ayu theme from separate repository
-- **Marketplace Extensions** — automatically installed via Zed (18 extensions)
+- **Marketplace Extensions** — automatically installed via Zed (14 extensions)
 
 ## Architecture
 
@@ -109,8 +109,10 @@ Each run:
 **Marketplace extensions** (auto-installed via Zed):
 - `ayu-darker`, `ayu-themes-glass` — Color themes
 - `catppuccin-icons` — Icon theme
-- `chrome-devtools-mcp`, `mcp-server-context7`, `mcp-server-playwright`, `serena-context-server` — MCP servers
 - `csv`, `dockerfile`, `git-firefly`, `html`, `material-icon-theme`, `php`, `powershell`, `scss`, `sql`, `toml`, `xml` — Language support and utilities
+
+MCP servers (Playwright, Context7, Serena, chrome-devtools) are intentionally
+not configured in Zed — used only in Claude Code.
 
 **Personal theme** (separate repository):
 - `cansee-ayu-theme` — Custom Ayu variant (synced from separate repo)
