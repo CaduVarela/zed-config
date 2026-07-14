@@ -28,8 +28,10 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/bootst
 
 | Component | Purpose |
 |-----------|---------|
-| `bootstrap.{ps1,sh}` | Remote entry points — ensure git, clone/update repo, run installer |
+| `bootstrap.{ps1,sh}` | Pull entry points — ensure git, clone/update repo, run installer |
+| `push.{ps1,sh}` | Push entry points — copy live Zed config back into the repo, commit, push |
 | `src/<os>/install.*` | Main orchestrator — calls prerequisites, syncs config, installs theme |
+| `src/<os>/push.*` | Push logic — copies live config files, strips platform-only fields, commits, pushes |
 | `src/<os>/prerequisites.*` | Package manager integration — installs Zed, Git, and extras |
 | `src/<os>/paths.*` | Platform-specific paths — Zed config directories by OS |
 | `config/` | User settings — settings.json, keymap.json, AGENTS.md, removed-extensions.json (synced to Zed) |
@@ -45,6 +47,7 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/bootst
 5. **Marketplace extensions via Zed's native mechanism** — `auto_install_extensions` in settings.json
 6. **Backups before first overwrite** — `.bak-TIMESTAMP` files preserve manual edits not yet ported
 7. **Explicit extension removal** — `config/removed-extensions.json` actively uninstalls extensions (Zed's `auto_install_extensions` only controls what gets installed, not what gets removed)
+8. **Explicit push, not a background daemon** — changing settings in the Zed UI is common; `push` is a deliberate, one-shot command you run when you want those changes saved, not an always-on file watcher
 
 ## Platform Details
 
@@ -86,9 +89,9 @@ AGENTS.md             → AGENTS.md.bak-20260711-143022
 
 This ensures you can recover manual edits if they haven't been ported to the repository yet.
 
-## Rerunning Bootstrap
+## Rerunning Bootstrap (Pull)
 
-Bootstrap is idempotent and serves as your **update mechanism**:
+Bootstrap is idempotent and serves as your **update mechanism** — repo changes flow into Zed:
 
 ```powershell
 # Windows
@@ -105,6 +108,26 @@ Each run:
 4. Uninstalls any extensions listed in `config/removed-extensions.json`
 5. Syncs theme extension
 6. Delegates extension marketplace updates to Zed itself
+
+## Pushing Local Changes (Push)
+
+Made changes in Zed's UI (settings, keybindings) that you want saved? `push` is the reverse of bootstrap — Zed changes flow into the repo:
+
+```powershell
+# Windows
+irm https://raw.githubusercontent.com/CaduVarela/zed-config/master/push.ps1 | iex
+
+# Linux/WSL
+curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/push.sh | bash
+```
+
+Each run:
+1. Updates the local repo clone (`git pull --ff-only`) before making changes
+2. Copies `settings.json`, `keymap.json`, and `AGENTS.md` from Zed's live config directory into `config/`
+3. Strips platform-only fields that shouldn't be committed (e.g. Windows' `terminal.shell.program`)
+4. Shows the diff, then commits and pushes — if there's nothing to sync, it exits without committing
+
+`push` requires the repo to already be cloned locally (i.e. you've run `bootstrap` at least once), and a working git remote (SSH key or credential helper configured for push access).
 
 ## Installed Extensions
 

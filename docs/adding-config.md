@@ -14,9 +14,10 @@ zed-config/
 ├── theme/               # Personal theme configuration
 │   └── manifest.json    # Pointer to custom theme repository
 ├── src/                 # Platform-specific installation logic
-│   ├── windows/         # Windows installer scripts (PowerShell)
-│   └── linux/           # Linux/WSL installer scripts (Bash)
-└── bootstrap.{ps1,sh}   # Entry points for remote execution
+│   ├── windows/         # Windows installer scripts (PowerShell), incl. push.ps1
+│   └── linux/           # Linux/WSL installer scripts (Bash), incl. push.sh
+├── bootstrap.{ps1,sh}   # Pull entry points for remote execution
+└── push.{ps1,sh}        # Push entry points for remote execution
 ```
 
 ## Adding a New Marketplace Extension
@@ -95,6 +96,30 @@ when you want an extension gone for good:
 **Note:** don't add your personal theme's `extension_id` (from
 `theme/manifest.json`) here - the theme sync step manages that extension on
 its own.
+
+## Pushing Local Changes Back to the Repo
+
+If you tweak settings or keybindings directly in Zed's UI and want to keep
+them, run `push` instead of editing `config/` by hand:
+
+```powershell
+# Windows
+irm https://raw.githubusercontent.com/CaduVarela/zed-config/master/push.ps1 | iex
+
+# Linux/WSL
+curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/push.sh | bash
+```
+
+It copies `settings.json`, `keymap.json`, and `AGENTS.md` from Zed's live
+config directory into `config/`, strips platform-only fields (like Windows'
+`terminal.shell.program`, which `install.ps1` injects at apply-time and
+should never be committed), shows the diff, then commits and pushes. If
+nothing changed, it's a no-op - safe to run anytime, e.g. right after you
+notice you changed a setting.
+
+`push` assumes the repo is already cloned locally (bootstrap has run at
+least once) and that your git remote has push access configured (SSH key or
+credential helper) - it does not set up authentication for you.
 
 ## Adding a New Personal Theme
 
