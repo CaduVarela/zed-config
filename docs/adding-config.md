@@ -8,7 +8,7 @@ This document explains how to extend the bootstrap configuration for new extensi
 zed-config/
 ├── config/              # User settings and keybindings (synced to Zed)
 │   ├── settings.json    # Zed settings, including auto_install_extensions
-│   ├── keymap.json      # Custom keybindings (empty/VSCode base for now)
+│   ├── keymap.json      # Custom keybindings (VSCode base + pane tab navigation)
 │   ├── AGENTS.md        # Agent instructions for Zed's Claude integration
 │   └── removed-extensions.json  # Extensions to actively uninstall
 ├── theme/               # Personal theme configuration

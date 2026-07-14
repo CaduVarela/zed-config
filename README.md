@@ -19,7 +19,7 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/bootst
 - **Zed Editor** (via winget on Windows, official installer on Linux)
 - **Git** (via winget on Windows, apt/yum on Linux)
 - **Personal Settings** — synced from `config/settings.json`
-- **Keybindings** — synced from `config/keymap.json` (currently VSCode base)
+- **Keybindings** — synced from `config/keymap.json` (VSCode base + browser-style pane tab navigation)
 - **Agent Instructions** — synced from `config/AGENTS.md`
 - **Theme Extension** — custom Ayu theme from separate repository
 - **Marketplace Extensions** — automatically installed via Zed (14 extensions)

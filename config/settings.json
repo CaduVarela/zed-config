@@ -1,4 +1,7 @@
 {
+  "file_finder": {
+    "include_ignored": "smart"
+  },
   "diff_view_style": "unified",
   "outline_panel": {
     "dock": "left"
@@ -50,7 +53,7 @@
   "project_panel": {
     "dock": "left",
     "git_status_indicator": false,
-    "hide_gitignore": true,
+    "hide_gitignore": false,
     "auto_fold_dirs": false
   },
   "minimap": {
@@ -83,7 +86,7 @@
   "base_keymap": "VSCode",
   "icon_theme": {
     "mode": "dark",
-    "light": "Zed (Default)",
+    "light": "Material Icon Theme",
     "dark": "Material Icon Theme"
   },
   "ui_font_size": 16,
