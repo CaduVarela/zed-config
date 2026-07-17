@@ -80,8 +80,36 @@ declare -A CONFIG_FILES=(
 for name in "${!CONFIG_FILES[@]}"; do
     dest="${CONFIG_FILES[$name]}"
     backup_if_exists "$dest"
-    cp "$REPO_ROOT/config/$name" "$dest"
-    echo "Copied $name"
+    if [[ "$name" == "settings.json" ]]; then
+        MCP_DIR="$REPO_ROOT/config/mcp"
+        python3 - "$REPO_ROOT/config/settings.json" "$MCP_DIR" "$dest" <<'PYEOF'
+import json
+import os
+import sys
+
+settings_path, mcp_dir, dest_path = sys.argv[1], sys.argv[2], sys.argv[3]
+with open(settings_path, encoding="utf-8") as f:
+    settings = json.load(f)
+
+servers = {}
+if os.path.isdir(mcp_dir):
+    for fname in sorted(os.listdir(mcp_dir)):
+        if fname.endswith(".json"):
+            with open(os.path.join(mcp_dir, fname), encoding="utf-8") as f:
+                servers[fname[:-5]] = json.load(f)
+
+if servers:
+    settings["context_servers"] = servers
+
+with open(dest_path, "w", encoding="utf-8") as f:
+    json.dump(settings, f, indent=2, ensure_ascii=False)
+    f.write("\n")
+PYEOF
+        echo "Copied settings.json (MCP servers merged from config/mcp/)"
+    else
+        cp "$REPO_ROOT/config/$name" "$dest"
+        echo "Copied $name"
+    fi
 done
 
 # No Linux-specific settings patch is needed: config/settings.json carries no
