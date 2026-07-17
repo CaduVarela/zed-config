@@ -10,6 +10,7 @@ zed-config/
 │   ├── settings.json    # Zed settings, including auto_install_extensions
 │   ├── keymap.json      # Custom keybindings (VSCode base + pane tab navigation)
 │   ├── AGENTS.md        # Agent instructions for Zed's Claude integration
+│   ├── mcp/              # One file per MCP server (context_servers), source of truth
 │   └── removed-extensions.json  # Extensions to actively uninstall
 ├── theme/               # Personal theme configuration
 │   └── manifest.json    # Pointer to custom theme repository
@@ -97,6 +98,27 @@ when you want an extension gone for good:
 `theme/manifest.json`) here - the theme sync step manages that extension on
 its own.
 
+## Adding or Removing an MCP Server
+
+Zed's MCP server configs (the `context_servers` setting) are tracked as one
+file per server under `config/mcp/`, named `<server-key>.json`, holding just
+that server's value (`{enabled, remote, settings}` — whatever Zed itself
+writes for that key).
+
+**To add a server:** configure it in Zed's UI as usual, then run `push` — it
+extracts every key under `context_servers` into `config/mcp/<key>.json`
+automatically. You don't need to hand-write these files.
+
+**To remove a server:** either delete it in Zed's UI and run `push` (which
+deletes the corresponding file, since `config/mcp/` always mirrors what's
+live), or delete `config/mcp/<key>.json` directly and commit — the next
+`install` will no longer include that server.
+
+**On install:** every file in `config/mcp/` is merged into `context_servers`
+before `settings.json` is written to Zed's live config directory. An empty or
+missing `config/mcp/` means no `context_servers` key at all, same as Zed's
+default.
+
 ## Pushing Local Changes Back to the Repo
 
 If you tweak settings or keybindings directly in Zed's UI and want to keep
@@ -113,9 +135,10 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/push.s
 It copies `settings.json`, `keymap.json`, and `AGENTS.md` from Zed's live
 config directory into `config/`, strips platform-only fields (like Windows'
 `terminal.shell.program`, which `install.ps1` injects at apply-time and
-should never be committed), shows the diff, then commits and pushes. If
-nothing changed, it's a no-op - safe to run anytime, e.g. right after you
-notice you changed a setting.
+should never be committed), extracts MCP server configs into `config/mcp/`
+(see [Adding or Removing an MCP Server](#adding-or-removing-an-mcp-server)),
+shows the diff, then commits and pushes. If nothing changed, it's a no-op -
+safe to run anytime, e.g. right after you notice you changed a setting.
 
 `push` assumes the repo is already cloned locally (bootstrap has run at
 least once) and that your git remote has push access configured (SSH key or

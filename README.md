@@ -21,6 +21,7 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/bootst
 - **Personal Settings** — synced from `config/settings.json`
 - **Keybindings** — synced from `config/keymap.json` (VSCode base + browser-style pane tab navigation)
 - **Agent Instructions** — synced from `config/AGENTS.md`
+- **MCP Server Configs** — synced from `config/mcp/*.json`, merged into Zed's `context_servers` setting
 - **Theme Extension** — custom Ayu theme from separate repository
 - **Marketplace Extensions** — automatically installed via Zed (14 extensions)
 
@@ -35,6 +36,7 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/bootst
 | `src/<os>/prerequisites.*` | Package manager integration — installs Zed, Git, and extras |
 | `src/<os>/paths.*` | Platform-specific paths — Zed config directories by OS |
 | `config/` | User settings — settings.json, keymap.json, AGENTS.md, removed-extensions.json (synced to Zed) |
+| `config/mcp/` | One file per MCP server (`context_servers` in Zed's settings.json), merged in by install and extracted back out by push |
 | `theme/manifest.json` | Theme pointer — URL and extension ID of custom theme |
 | `docs/adding-config.md` | Extension guide — how to add new extensions, settings, themes, prerequisites |
 
@@ -136,8 +138,8 @@ Each run:
 - `catppuccin-icons` — Icon theme
 - `csv`, `dockerfile`, `git-firefly`, `html`, `material-icon-theme`, `php`, `powershell`, `scss`, `sql`, `toml`, `xml` — Language support and utilities
 
-MCP servers (Playwright, Context7, Serena, chrome-devtools) are intentionally
-not configured in Zed — used only in Claude Code.
+**MCP servers** (in `config/mcp/`, merged into Zed's `context_servers` setting):
+- `chrome-devtools-mcp-zed`, `mcp-server-playwright` — synced from Zed's live config; see [docs/adding-config.md](docs/adding-config.md#adding-or-removing-an-mcp-server) for how to add or remove one
 
 **Personal theme** (separate repository):
 - `cansee-ayu-theme` — Custom Ayu variant (synced from separate repo)
