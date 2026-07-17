@@ -1,4 +1,41 @@
 {
+  "context_servers": {
+    "chrome-devtools-mcp-zed": {
+      "enabled": true,
+      "remote": false,
+      "settings": {
+        "browser_url": null,
+        "ws_endpoint": null,
+        "ws_headers": null,
+        "auto_connect": null,
+        "channel": null,
+        "headless": true,
+        "isolated": null,
+        "user_data_dir": null,
+        "viewport": null,
+        "executable_path": null,
+        "chrome_arg": [],
+        "proxy_server": null,
+        "accept_insecure_certs": null,
+        "category_emulation": null,
+        "category_performance": null,
+        "category_network": null,
+        "log_file": null,
+        "extra_args": []
+      }
+    },
+    "mcp-server-playwright": {
+      "enabled": true,
+      "remote": false,
+      "settings": {
+        "user_data_dir": "~/.playwright-mcp/user-data",
+        "browser": "chromium",
+        "headless": true,
+        "vision": true,
+        "output_dir": "~/.playwright-mcp/output"
+      }
+    }
+  },
   "file_finder": {
     "include_ignored": "smart"
   },
@@ -10,6 +47,7 @@
     "dock": "left"
   },
   "agent": {
+    "play_sound_when_agent_done": "when_hidden",
     "dock": "right",
     "favorite_models": [],
     "model_parameters": []
@@ -26,7 +64,7 @@
     "collapse_untracked_diff": false,
     "tree_view": false,
     "diff_stats": true,
-    "dock": "right"
+    "dock": "left"
   },
   "git": {
     "inline_blame": {
@@ -72,6 +110,9 @@
   },
   "line_ending": "prefer_lf",
   "agent_servers": {
+    "codex-acp": {
+      "type": "registry"
+    },
     "github-copilot-cli": {
       "type": "registry"
     },
