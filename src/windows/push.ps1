@@ -39,19 +39,53 @@ if (Test-Path $settingsPath) {
     }
 }
 
+# Extract Zed's MCP server configs (context_servers) into config/mcp/<name>.json
+# as the source of truth, and strip context_servers from settings.json so it
+# isn't duplicated. Deletes files for servers no longer present live, mirroring
+# the theme sync's "repo always matches what's live" behavior.
+$mcpDir = "$RepoRoot\config\mcp"
+if (-not (Test-Path $mcpDir)) {
+    New-Item -ItemType Directory -Path $mcpDir -Force | Out-Null
+}
+
+if (Test-Path $settingsPath) {
+    $settings = Get-Content $settingsPath -Raw | ConvertFrom-Json
+    $liveKeys = @()
+    if ($settings.context_servers) {
+        $liveKeys = $settings.context_servers.PSObject.Properties.Name
+        foreach ($key in $liveKeys) {
+            $destFile = "$mcpDir\$key.json"
+            $settings.context_servers.$key | ConvertTo-Json -Depth 20 | Set-Content $destFile
+            Write-Host "Synced MCP config: $key.json" -ForegroundColor Cyan
+        }
+    }
+
+    Get-ChildItem -Path $mcpDir -Filter "*.json" -ErrorAction SilentlyContinue | ForEach-Object {
+        if ($liveKeys -notcontains $_.BaseName) {
+            Remove-Item $_.FullName -Force
+            Write-Host "Removed stale MCP config: $($_.Name)" -ForegroundColor Yellow
+        }
+    }
+
+    if ($settings.PSObject.Properties.Name -contains "context_servers") {
+        $settings.PSObject.Properties.Remove("context_servers")
+    }
+    $settings | ConvertTo-Json -Depth 20 | Set-Content $settingsPath
+}
+
 Set-Location $RepoRoot
 
-$changed = git status --porcelain -- config/settings.json config/keymap.json config/AGENTS.md
+$changed = git status --porcelain -- config/settings.json config/keymap.json config/AGENTS.md config/mcp
 if (-not $changed) {
     Write-Host "Already in sync - nothing to push." -ForegroundColor Green
     exit 0
 }
 
 Write-Host "`nChanges to sync:" -ForegroundColor Yellow
-git --no-pager diff -- config/settings.json config/keymap.json config/AGENTS.md
-git --no-pager diff --cached -- config/settings.json config/keymap.json config/AGENTS.md
+git --no-pager diff -- config/settings.json config/keymap.json config/AGENTS.md config/mcp
+git --no-pager diff --cached -- config/settings.json config/keymap.json config/AGENTS.md config/mcp
 
-git add config/settings.json config/keymap.json config/AGENTS.md
+git add config/settings.json config/keymap.json config/AGENTS.md config/mcp
 git commit -m "chore: sync personal config from $env:COMPUTERNAME"
 
 Write-Host "`nPushing to remote..." -ForegroundColor Cyan
