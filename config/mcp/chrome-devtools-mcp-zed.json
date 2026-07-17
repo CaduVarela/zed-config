@@ -1,0 +1,24 @@
+{
+  "enabled": true,
+  "remote": false,
+  "settings": {
+    "browser_url": null,
+    "ws_endpoint": null,
+    "ws_headers": null,
+    "auto_connect": null,
+    "channel": null,
+    "headless": true,
+    "isolated": null,
+    "user_data_dir": null,
+    "viewport": null,
+    "executable_path": null,
+    "chrome_arg": [],
+    "proxy_server": null,
+    "accept_insecure_certs": null,
+    "category_emulation": null,
+    "category_performance": null,
+    "category_network": null,
+    "log_file": null,
+    "extra_args": []
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "remote": false,
+  "settings": {
+    "user_data_dir": "~/.playwright-mcp/user-data",
+    "browser": "chromium",
+    "headless": true,
+    "vision": true,
+    "output_dir": "~/.playwright-mcp/output"
+  }
+}
