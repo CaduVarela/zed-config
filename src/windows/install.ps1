@@ -76,14 +76,31 @@ if (Test-Path $removedExtensionsPath) {
 # Windows-only patch: point the integrated terminal at WSL.
 # This is the single platform-specific field (see design decision 4) -
 # everything else in settings.json is shared as-is across platforms.
-Write-Host "`nStep 4: Applying Windows-specific settings..." -ForegroundColor Yellow
+Write-Host "`nStep 4: Applying Windows-specific settings and MCP servers..." -ForegroundColor Yellow
 $settings = Get-Content $ZedSettingsFile -Raw | ConvertFrom-Json
 if (-not $settings.terminal) {
     $settings | Add-Member -MemberType NoteProperty -Name terminal -Value ([PSCustomObject]@{})
 }
 $settings.terminal | Add-Member -MemberType NoteProperty -Name shell -Value ([PSCustomObject]@{ program = "wsl.exe" }) -Force
-$settings | ConvertTo-Json -Depth 20 | Set-Content $ZedSettingsFile
 Write-Host "Set terminal.shell.program = wsl.exe" -ForegroundColor Green
+
+$mcpDir = "$RepoRoot\config\mcp"
+if (Test-Path $mcpDir) {
+    $servers = [PSCustomObject]@{}
+    Get-ChildItem -Path $mcpDir -Filter "*.json" | Sort-Object Name | ForEach-Object {
+        $value = Get-Content $_.FullName -Raw | ConvertFrom-Json
+        $servers | Add-Member -MemberType NoteProperty -Name $_.BaseName -Value $value
+    }
+    if ($servers.PSObject.Properties.Name.Count -gt 0) {
+        if ($settings.PSObject.Properties.Name -contains "context_servers") {
+            $settings.PSObject.Properties.Remove("context_servers")
+        }
+        $settings | Add-Member -MemberType NoteProperty -Name context_servers -Value $servers
+        Write-Host "Merged $($servers.PSObject.Properties.Name.Count) MCP server config(s)" -ForegroundColor Green
+    }
+}
+
+$settings | ConvertTo-Json -Depth 20 | Set-Content $ZedSettingsFile
 
 # Sync theme extension
 Write-Host "`nStep 5: Syncing theme extension..." -ForegroundColor Yellow
