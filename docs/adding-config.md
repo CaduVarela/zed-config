@@ -38,6 +38,10 @@ zed-config/
 
 When the bootstrap runs next, Zed will automatically install the new extension.
 
+Alternatively, install it from Zed's UI and run `push`: it adds every
+installed extension that isn't already listed (or in
+`removed-extensions.json`) to `auto_install_extensions`.
+
 ## Adding Custom Keybindings
 
 1. Open `config/keymap.json`
@@ -135,9 +139,12 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/push.s
 It copies `settings.json`, `keymap.json`, and `AGENTS.md` from Zed's live
 config directory into `config/`, strips platform-only fields (like Windows'
 `terminal.shell.program`, which `install.ps1` injects at apply-time and
-should never be committed), extracts MCP server configs into `config/mcp/`
+should never be committed) and machine-specific ones (`wsl_connections`,
+`ssh_connections`), extracts enabled MCP server configs into `config/mcp/`
 (see [Adding or Removing an MCP Server](#adding-or-removing-an-mcp-server)),
-shows the diff, then commits and pushes. If nothing changed, it's a no-op -
+adds extensions installed through Zed's UI to `auto_install_extensions`
+(never removing entries - use `removed-extensions.json` for that), shows the
+diff, then commits and pushes. If nothing changed, it's a no-op -
 safe to run anytime, e.g. right after you notice you changed a setting.
 
 `push` assumes the repo is already cloned locally (bootstrap has run at

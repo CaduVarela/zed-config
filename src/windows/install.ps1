@@ -11,6 +11,7 @@ Write-Host "Repository root: $RepoRoot" -ForegroundColor Cyan
 
 # Source paths
 . "$PSScriptRoot\paths.ps1"
+. "$PSScriptRoot\json.ps1"
 
 Write-Host "`nStep 1: Installing prerequisites..." -ForegroundColor Yellow
 & "$PSScriptRoot\prerequisites.ps1"
@@ -77,7 +78,7 @@ if (Test-Path $removedExtensionsPath) {
 # This is the single platform-specific field (see design decision 4) -
 # everything else in settings.json is shared as-is across platforms.
 Write-Host "`nStep 4: Applying Windows-specific settings and MCP servers..." -ForegroundColor Yellow
-$settings = Get-Content $ZedSettingsFile -Raw | ConvertFrom-Json
+$settings = Read-JsonFile $ZedSettingsFile
 if (-not $settings.terminal) {
     $settings | Add-Member -MemberType NoteProperty -Name terminal -Value ([PSCustomObject]@{})
 }
@@ -88,7 +89,7 @@ $mcpDir = "$RepoRoot\config\mcp"
 if (Test-Path $mcpDir) {
     $servers = [PSCustomObject]@{}
     Get-ChildItem -Path $mcpDir -Filter "*.json" | Sort-Object Name | ForEach-Object {
-        $value = Get-Content $_.FullName -Raw | ConvertFrom-Json
+        $value = Read-JsonFile $_.FullName
         $servers | Add-Member -MemberType NoteProperty -Name $_.BaseName -Value $value
     }
     if ($servers.PSObject.Properties.Name.Count -gt 0) {
@@ -100,7 +101,7 @@ if (Test-Path $mcpDir) {
     }
 }
 
-$settings | ConvertTo-Json -Depth 20 | Set-Content $ZedSettingsFile
+Write-JsonFile $ZedSettingsFile $settings
 
 # Sync theme extension
 Write-Host "`nStep 5: Syncing theme extension..." -ForegroundColor Yellow

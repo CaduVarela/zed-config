@@ -29,43 +29,78 @@ for entry in "${CONFIG_FILES[@]}"; do
     fi
 done
 
-# No platform-specific fields are injected into settings.json on native
-# Linux today (unlike Windows' terminal.shell.program patch in install.ps1),
-# so nothing needs to be stripped before committing back.
-
-# Extract Zed's MCP server configs (context_servers) into config/mcp/<name>.json
-# as the source of truth, and strip context_servers from settings.json so it
-# isn't duplicated. Deletes files for servers no longer present live, mirroring
-# the theme sync's "repo always matches what's live" behavior.
+# Strip machine-specific state (recent WSL/SSH projects) from settings.json,
+# extract Zed's MCP server configs (context_servers) into
+# config/mcp/<name>.json as the source of truth, and add extensions installed
+# through the Zed UI to auto_install_extensions.
+#
+# MCP: disabled servers are left out, and files for servers no longer present
+# (or enabled) live are deleted, mirroring the theme sync's "repo always
+# matches what's live" behavior.
+#
+# Extensions: skips the personal theme (synced separately) and anything in
+# removed-extensions.json. Never removes entries: an extension missing here
+# may still be wanted elsewhere - uninstall via removed-extensions.json instead.
 MCP_DIR="$REPO_ROOT/config/mcp"
 mkdir -p "$MCP_DIR"
-python3 - "$REPO_ROOT/config/settings.json" "$MCP_DIR" <<'PYEOF'
+python3 - "$REPO_ROOT" "$ZED_EXTENSIONS_DIR" <<'PYEOF'
 import json
 import os
 import sys
 
-settings_path, mcp_dir = sys.argv[1], sys.argv[2]
-with open(settings_path, encoding="utf-8") as f:
-    settings = json.load(f)
+repo_root, extensions_dir = sys.argv[1], sys.argv[2]
+settings_path = os.path.join(repo_root, "config", "settings.json")
+mcp_dir = os.path.join(repo_root, "config", "mcp")
+
+
+def load(path, default):
+    if not os.path.exists(path):
+        return default
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def dump(path, value):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(value, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
+
+settings = load(settings_path, {})
+
+for key in ("wsl_connections", "ssh_connections"):
+    if settings.pop(key, None) is not None:
+        print(f"Stripped machine-specific {key} before committing")
 
 servers = settings.pop("context_servers", {})
+live_keys = set()
+for key, value in servers.items():
+    if isinstance(value, dict) and value.get("enabled") is False:
+        print(f"Skipping disabled MCP config: {key}")
+        continue
+    live_keys.add(key)
+    dump(os.path.join(mcp_dir, f"{key}.json"), value)
+    print(f"Synced MCP config: {key}.json")
 
-live_keys = set(servers.keys())
 for existing in os.listdir(mcp_dir):
     if existing.endswith(".json") and existing[:-5] not in live_keys:
         os.remove(os.path.join(mcp_dir, existing))
         print(f"Removed stale MCP config: {existing}")
 
-for key, value in servers.items():
-    dest = os.path.join(mcp_dir, f"{key}.json")
-    with open(dest, "w", encoding="utf-8") as f:
-        json.dump(value, f, indent=2, ensure_ascii=False)
-        f.write("\n")
-    print(f"Synced MCP config: {key}.json")
+if os.path.isdir(extensions_dir):
+    removed = set(load(os.path.join(repo_root, "config", "removed-extensions.json"), []))
+    theme_id = load(os.path.join(repo_root, "theme", "manifest.json"), {}).get("extension_id")
+    auto_install = dict(settings.get("auto_install_extensions", {}))
+    for ext_id in sorted(os.listdir(extensions_dir)):
+        if not os.path.isdir(os.path.join(extensions_dir, ext_id)):
+            continue
+        if ext_id == theme_id or ext_id in removed or ext_id in auto_install:
+            continue
+        auto_install[ext_id] = True
+        print(f"Added installed extension to auto_install_extensions: {ext_id}")
+    settings["auto_install_extensions"] = dict(sorted(auto_install.items()))
 
-with open(settings_path, "w", encoding="utf-8") as f:
-    json.dump(settings, f, indent=2, ensure_ascii=False)
-    f.write("\n")
+dump(settings_path, settings)
 PYEOF
 
 cd "$REPO_ROOT"

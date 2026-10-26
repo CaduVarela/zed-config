@@ -126,8 +126,10 @@ curl -fsSL https://raw.githubusercontent.com/CaduVarela/zed-config/master/push.s
 Each run:
 1. Updates the local repo clone (`git pull --ff-only`) before making changes
 2. Copies `settings.json`, `keymap.json`, and `AGENTS.md` from Zed's live config directory into `config/`
-3. Strips platform-only fields that shouldn't be committed (e.g. Windows' `terminal.shell.program`)
-4. Shows the diff, then commits and pushes — if there's nothing to sync, it exits without committing
+3. Strips platform-only and machine-specific fields that shouldn't be committed (Windows' `terminal.shell.program`, `wsl_connections`, `ssh_connections`)
+4. Extracts enabled MCP servers into `config/mcp/` (disabled ones are left out)
+5. Adds extensions installed through Zed's UI to `auto_install_extensions` (skipping the theme and `removed-extensions.json`); it never removes entries, so uninstalling stays explicit via `removed-extensions.json`
+6. Shows the diff, then commits and pushes — if there's nothing to sync, it exits without committing
 
 `push` requires the repo to already be cloned locally (i.e. you've run `bootstrap` at least once), and a working git remote (SSH key or credential helper configured for push access).
 
