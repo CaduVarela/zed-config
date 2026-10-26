@@ -21,7 +21,7 @@
     "status_style": "label_color",
     "fallback_branch_name": "master",
     "show_count_badge": false,
-    "folder_icons": true,
+    "folder_indicator": "icon",
     "file_icons": false,
     "group_by": "status",
     "collapse_untracked_diff": false,
@@ -47,9 +47,10 @@
   },
   "terminal": {
     "env": {
-      "TERM": "\"xterm-256color\""
+      "TERM": "xterm-256color"
     },
-    "max_scroll_history_lines": 5000
+    "max_scroll_history_lines": 5000,
+    "starts_open": false
   },
   "project_panel": {
     "dock": "left",
@@ -108,8 +109,11 @@
     "dockerfile": true,
     "git-firefly": true,
     "html": true,
+    "java": true,
+    "log": true,
     "material-icon-theme": true,
     "php": true,
+    "plantuml": true,
     "powershell": true,
     "scss": true,
     "sql": true,
@@ -151,5 +155,11 @@
         "..."
       ]
     }
-  }
+  },
+  "cli_default_open_behavior": "new_window",
+  "edit_predictions": {
+    "provider": "zed"
+  },
+  "tab_size": 4,
+  "suggest_extensions": true
 }
