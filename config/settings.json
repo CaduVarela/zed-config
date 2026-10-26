@@ -115,5 +115,41 @@
     "sql": true,
     "toml": true,
     "xml": true
+  },
+  "language_servers": [
+    "!vtsls",
+    "!eslint",
+    "!emmet-language-server",
+    "!tailwindcss-language-server",
+    "..."
+  ],
+  "languages": {
+    "JavaScript": {
+      "language_servers": [
+        "!vtsls",
+        "!eslint",
+        "!emmet-language-server",
+        "!tailwindcss-language-server",
+        "..."
+      ]
+    },
+    "TypeScript": {
+      "language_servers": [
+        "!vtsls",
+        "!eslint",
+        "!emmet-language-server",
+        "!tailwindcss-language-server",
+        "..."
+      ]
+    },
+    "TSX": {
+      "language_servers": [
+        "!vtsls",
+        "!eslint",
+        "!emmet-language-server",
+        "!tailwindcss-language-server",
+        "..."
+      ]
+    }
   }
 }
