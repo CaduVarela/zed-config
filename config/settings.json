@@ -131,6 +131,9 @@
     "!eslint",
     "!emmet-language-server",
     "!tailwindcss-language-server",
+    "!scss-lsp",
+    "!some-sass-lsp",
+    "!phpactor",
     "..."
   ],
   "languages": {
@@ -140,6 +143,9 @@
         "!eslint",
         "!emmet-language-server",
         "!tailwindcss-language-server",
+        "!scss-lsp",
+        "!some-sass-lsp",
+        "!phpactor",
         "..."
       ]
     },
@@ -149,6 +155,9 @@
         "!eslint",
         "!emmet-language-server",
         "!tailwindcss-language-server",
+        "!scss-lsp",
+        "!some-sass-lsp",
+        "!phpactor",
         "..."
       ]
     },
@@ -158,6 +167,81 @@
         "!eslint",
         "!emmet-language-server",
         "!tailwindcss-language-server",
+        "!scss-lsp",
+        "!some-sass-lsp",
+        "!phpactor",
+        "..."
+      ]
+    },
+    "PHP": {
+      "language_servers": [
+        "!vtsls",
+        "!eslint",
+        "!emmet-language-server",
+        "!tailwindcss-language-server",
+        "!scss-lsp",
+        "!some-sass-lsp",
+        "!phpactor",
+        "..."
+      ]
+    },
+    "Blade": {
+      "language_servers": [
+        "!vtsls",
+        "!eslint",
+        "!emmet-language-server",
+        "!tailwindcss-language-server",
+        "!scss-lsp",
+        "!some-sass-lsp",
+        "!phpactor",
+        "..."
+      ]
+    },
+    "HTML": {
+      "language_servers": [
+        "!vtsls",
+        "!eslint",
+        "!emmet-language-server",
+        "!tailwindcss-language-server",
+        "!scss-lsp",
+        "!some-sass-lsp",
+        "!phpactor",
+        "..."
+      ]
+    },
+    "CSS": {
+      "language_servers": [
+        "!vtsls",
+        "!eslint",
+        "!emmet-language-server",
+        "!tailwindcss-language-server",
+        "!scss-lsp",
+        "!some-sass-lsp",
+        "!phpactor",
+        "..."
+      ]
+    },
+    "SCSS": {
+      "language_servers": [
+        "!vtsls",
+        "!eslint",
+        "!emmet-language-server",
+        "!tailwindcss-language-server",
+        "!scss-lsp",
+        "!some-sass-lsp",
+        "!phpactor",
+        "..."
+      ]
+    },
+    "SASS": {
+      "language_servers": [
+        "!vtsls",
+        "!eslint",
+        "!emmet-language-server",
+        "!tailwindcss-language-server",
+        "!scss-lsp",
+        "!some-sass-lsp",
+        "!phpactor",
         "..."
       ]
     }
