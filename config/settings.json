@@ -175,6 +175,9 @@
     },
     "PHP": {
       "language_servers": [
+        "intelephense",
+        "!phptools",
+        "!phpantom",
         "!vtsls",
         "!eslint",
         "!emmet-language-server",
@@ -187,6 +190,9 @@
     },
     "Blade": {
       "language_servers": [
+        "intelephense",
+        "!phptools",
+        "!phpantom",
         "!vtsls",
         "!eslint",
         "!emmet-language-server",
